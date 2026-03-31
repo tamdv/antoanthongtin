@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: custom_lab_db
+    environment:
+      POSTGRES_USER: user_attt
+      POSTGRES_PASSWORD: password_secret
+      POSTGRES_DB: user_management
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  web:
+    build: .
+    container_name: custom_lab_web
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://user_attt:password_secret@db:5432/user_management
