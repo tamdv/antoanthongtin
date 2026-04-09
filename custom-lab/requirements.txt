@@ -1,5 +1,5 @@
 Flask==2.3.3
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 flask-sqlalchemy==3.0.5
 Flask-Bcrypt==1.0.1
 Flask-Limiter==3.5.0

@@ -1,30 +1,88 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống Lab ATTT - Đăng nhập</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 350px; }
-        h2 { text-align: center; color: #333; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #666; }
-        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background-color: #007bff; border: none; color: white; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #0056b3; }
-        .flash-messages { color: #d9534f; text-align: center; margin-bottom: 15px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .flash-messages {
+            color: #d9534f;
+            text-align: center;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
+
 <body>
     <div class="login-container">
-        <h2>Đăng nhập Hệ thống</h2>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <div class="flash-messages">
-              {{ messages[0] }}
-            </div>
-          {% endif %}
+        <h2>Đăng nhập Hệ thống (Secure)</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-messages flash-{{ category }}"
+            style="color: {% if category == 'danger' %}#d9534f{% else %}#f0ad4e{% endif %};">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
         <form action="/login" method="POST">
             <div class="form-group">
@@ -35,8 +93,24 @@
                 <label for="password">Mật khẩu:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit">Đăng nhập</button>
+
+            <!-- [SECURE] Lớp phòng thủ 1: CAPTCHA Toán học -->
+            <div class="form-group" style="background: #e9ecef; padding: 10px; border-radius: 4px;">
+                <label for="captcha">Xác nhận con người: <strong>{{ captcha_text }}</strong></label>
+                <input type="text" id="captcha" name="captcha" placeholder="Nhập kết quả" required>
+            </div>
+
+            <!-- [SECURE] Lớp phòng thủ 2: MFA (TOTP) -->
+            <div class="form-group"
+                style="border: 1px dashed #28a745; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                <label for="mfa_code">Mã xác thực MFA:</label>
+                <input type="text" id="mfa_code" name="mfa_code" placeholder="6 chữ số từ app">
+                <!-- <small style="color: #6c757d; font-size: 11px;">Mẹo demo Admin: Dùng khóa <code>JBSWY3DPEHPK3PXP</code></small> -->
+            </div>
+
+            <button type="submit" style="margin-top: 15px;">Đăng nhập an toàn</button>
         </form>
     </div>
 </body>
+
 </html>
